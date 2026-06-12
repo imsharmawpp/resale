@@ -1,0 +1,16 @@
+/*! RIMS Pro admin stylesheet */
+.rims-admin { padding: 16px; }
+.rims-admin__widgets { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 16px 0; }
+@media (min-width: 768px) { .rims-admin__widgets { grid-template-columns: repeat(4, 1fr); } }
+.rims-admin__widget { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
+.rims-admin__metric { font-size: 28px; font-weight: 800; color: #1e3a8a; margin: 8px 0 0; }
+.rims-admin__charts { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 1024px) { .rims-admin__charts { grid-template-columns: repeat(2, 1fr); } }
+.rims-admin__chart { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
+.rims-admin__heatmaps { background: #fff; border-radius: 10px; padding: 16px; margin-top: 16px; border: 1px solid #e2e8f0; }
+.rims-kanban { display: grid; grid-template-columns: repeat(7, minmax(180px, 1fr)); gap: 12px; overflow-x: auto; padding-bottom: 12px; }
+.rims-kanban__col { background: #f1f5f9; padding: 12px; border-radius: 10px; min-height: 200px; }
+.rims-kanban__col h3 { margin: 0 0 8px; font-size: 14px; color: #1e3a8a; }
+.rims-kanban__card { background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 8px; cursor: grab; }
+.rims-kanban__source { display: block; margin-top: 6px; font-size: 11px; color: #64748b; }
+.rims-admin__dropzone { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 32px; text-align: center; background: #f8fafc; }
