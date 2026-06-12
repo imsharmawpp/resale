@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 /**
  * Plugin Name:       RIMS Pro - Resale Inventory Management System
  * Plugin URI:        https://goldlineestate.com/rims-pro
  * Description:       Enterprise-grade real estate resale inventory platform with native theme integration, four view modes, lead management, AI content, exports, and multi-tenant SaaS readiness.
  * Version:           1.0.0
  * Requires at least: 6.4
- * Requires PHP:      8.3
+ * Requires PHP:      8.1
  * Author:            GoldLine Estate
  * Author URI:        https://goldlineestate.com
  * License:           GPL-2.0-or-later
@@ -16,7 +17,13 @@
  * @package RimsPro
  */
 
-declare(strict_types=1);
+// PHP version gate — bail early with a friendly admin notice on PHP < 8.1.
+if ( version_compare( PHP_VERSION, '8.1.0', '<' ) ) {
+    add_action( 'admin_notices', function () {
+        echo '<div class="notice notice-error"><p><strong>RIMS Pro</strong> requires PHP 8.1 or later. Your server is running PHP ' . PHP_VERSION . '. Please upgrade PHP to activate this plugin.</p></div>';
+    } );
+    return; // Stop loading entirely — prevents parse errors from enum syntax.
+}
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -32,10 +39,15 @@ define( 'RIMS_PRO_TEXT_DOMAIN', 'rims-pro' );
 define( 'RIMS_PRO_DB_PREFIX', 'rims_' );
 define( 'RIMS_PRO_NONCE_ACTION', 'rims_pro_nonce' );
 
-// Composer autoloader (vendored).
+// Composer autoloader (vendored). In production zips vendor/ is removed entirely;
+// wrap in try-catch so dev-only packages never cause a fatal in production.
 $rims_pro_autoload = RIMS_PRO_DIR . 'vendor/autoload.php';
 if ( file_exists( $rims_pro_autoload ) ) {
-    require_once $rims_pro_autoload;
+    try {
+        require_once $rims_pro_autoload;
+    } catch ( \Throwable $e ) {
+        // Dev environment only; production zip has no vendor/.
+    }
 }
 
 // PSR-4 fallback autoloader for the plugin's own classes (works without composer install).

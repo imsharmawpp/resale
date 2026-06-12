@@ -27,11 +27,10 @@ rm -rf \
     "${DEST}/node_modules" \
     "${DEST}/.idea" || true
 
-# Strip dev-only vendor packages (PHPUnit, Eris, helpers) so the zip stays lean.
-for pkg in phpunit giorgiosironi sebastian myclabs nikic phar-io theseer; do
-    rm -rf "${DEST}/vendor/${pkg}" || true
-done
-rm -rf "${DEST}/vendor/bin" || true
+# Remove vendor/ entirely — the plugin's PSR-4 fallback autoloader handles all
+# RimsPro\\ classes, and vendor/ only adds dev-only packages (PHPUnit, Eris)
+# that can cause fatal errors in production.
+rm -rf "${DEST}/vendor" || true
 
 # Remove any stray zip artifacts.
 find "${DEST}" -name '*.zip' -type f -delete 2>/dev/null || true
