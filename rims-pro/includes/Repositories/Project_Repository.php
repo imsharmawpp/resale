@@ -29,6 +29,10 @@ class Project_Repository extends Base_Repository {
         return $row ? Project::fromArray( $row ) : null;
     }
 
+    public function delete_project( int $tenant_id, int $id ): bool {
+        return $this->delete( $tenant_id, $id );
+    }
+
     public function persist( int $tenant_id, Project $p ): int {
         $data = [
             'name'              => $p->name,

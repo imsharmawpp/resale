@@ -7,6 +7,7 @@ use RimsPro\Admin\Admin_Dashboard;
 use RimsPro\Admin\Inventory_Admin;
 use RimsPro\Admin\Lead_Admin;
 use RimsPro\Admin\Media_Admin;
+use RimsPro\Admin\Project_Admin;
 use RimsPro\Admin\Settings_Admin;
 use RimsPro\Ajax\Ajax_Router;
 use RimsPro\Elementor\Elementor_Widget_Provider;
@@ -110,6 +111,7 @@ final class Plugin {
                 'admin_menu',
                 function (): void {
                     ( new Admin_Dashboard( $this->container ) )->register();
+                    ( new Project_Admin( $this->container ) )->register();
                     ( new Inventory_Admin( $this->container ) )->register();
                     ( new Lead_Admin( $this->container ) )->register();
                     ( new Media_Admin( $this->container ) )->register();
