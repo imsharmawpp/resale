@@ -29,6 +29,22 @@ class Tenant_Resolver {
             return $this->cached;
         }
 
+        // Safety: if tables don't exist yet (activation incomplete), return default.
+        global $wpdb;
+        if ( ! isset( $wpdb ) ) {
+            return $this->cached = new Tenant( id: 1, name: 'Default', domain: 'localhost', mode: 'single' );
+        }
+
+        // Check if our tables exist (cheap SHOW TABLES query, cached after first check).
+        static $tables_exist = null;
+        if ( $tables_exist === null ) {
+            $table = $wpdb->prefix . RIMS_PRO_DB_PREFIX . 'tenants';
+            $tables_exist = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table ) ) !== null;
+        }
+        if ( ! $tables_exist ) {
+            return $this->cached = new Tenant( id: 1, name: 'Default', domain: 'localhost', mode: 'single' );
+        }
+
         $explicit = (int) ( $_SERVER['HTTP_X_RIMS_TENANT'] ?? 0 );
         if ( $explicit > 0 ) {
             $tenant = $this->tenants->find( $explicit );

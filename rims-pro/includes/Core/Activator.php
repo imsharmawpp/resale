@@ -8,6 +8,15 @@ use RimsPro\Migrations\Migration_Runner;
 final class Activator {
 
     public function activate(): void {
+        // Extend execution time to prevent 504 timeouts on shared hosting.
+        if ( function_exists( 'set_time_limit' ) ) {
+            @set_time_limit( 300 ); // Allow up to 5 minutes for table creation.
+        }
+        // Suppress PHP memory limit issues on constrained hosts.
+        if ( function_exists( 'wp_raise_memory_limit' ) ) {
+            wp_raise_memory_limit( 'admin' );
+        }
+
         // Run migrations.
         ( new Migration_Runner() )->run();
 
@@ -63,7 +72,8 @@ final class Activator {
             wp_schedule_event( time() + 600, 'daily', 'rims_pro_expire_units' );
         }
 
-        // Flush rewrite rules so virtual routes register.
-        flush_rewrite_rules();
+        // Defer flush_rewrite_rules() to admin_init to avoid activation timeout.
+        // The actual flush happens on the next admin page load via Plugin::boot().
+        set_transient( 'rims_pro_flush_rewrite', '1', 60 );
     }
 }

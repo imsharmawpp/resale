@@ -48,6 +48,14 @@ final class Plugin {
         }
         $this->booted = true;
 
+        // Deferred rewrite flush after activation (avoids timeout during activation).
+        add_action( 'admin_init', static function(): void {
+            if ( get_transient( 'rims_pro_flush_rewrite' ) ) {
+                delete_transient( 'rims_pro_flush_rewrite' );
+                flush_rewrite_rules();
+            }
+        });
+
         // i18n.
         add_action(
             'init',

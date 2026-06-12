@@ -45,8 +45,10 @@ final class Migration_Runner {
                 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
                 $cs = $charset( $wpdb );
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'tenants' )} (
+                // Batch all 17 CREATE TABLE statements into a single dbDelta() call.
+                // This is dramatically faster than 17 separate calls because dbDelta()
+                // only needs to load and parse the schema comparison logic once.
+                $sql = "CREATE TABLE {$p( $wpdb, 'tenants' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         name VARCHAR(191) NOT NULL,
                         domain VARCHAR(191) NOT NULL,
@@ -54,11 +56,9 @@ final class Migration_Runner {
                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (id),
                         KEY domain_idx (domain)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'tenant_settings' )} (
+                    CREATE TABLE {$p( $wpdb, 'tenant_settings' )} (
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         company_name VARCHAR(191) NOT NULL DEFAULT '',
                         logo_url VARCHAR(255) NOT NULL DEFAULT '',
@@ -73,11 +73,9 @@ final class Migration_Runner {
                         rate_limit_max INT NOT NULL DEFAULT 60,
                         status_color_map LONGTEXT NULL,
                         PRIMARY KEY (tenant_id)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'projects' )} (
+                    CREATE TABLE {$p( $wpdb, 'projects' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         name VARCHAR(191) NOT NULL,
@@ -99,11 +97,9 @@ final class Migration_Runner {
                         KEY tenant_slug_idx (tenant_id, slug),
                         KEY builder_idx (tenant_id, builder),
                         KEY location_idx (tenant_id, location)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'inventory_units' )} (
+                    CREATE TABLE {$p( $wpdb, 'inventory_units' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         project_id BIGINT UNSIGNED NOT NULL,
@@ -134,22 +130,18 @@ final class Migration_Runner {
                         KEY tenant_project_idx (tenant_id, project_id),
                         KEY tenant_status_idx (tenant_id, status),
                         KEY tenant_slug_idx (tenant_id, slug)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'unit_variants' )} (
+                    CREATE TABLE {$p( $wpdb, 'unit_variants' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         unit_id BIGINT UNSIGNED NOT NULL,
                         area_sqft INT UNSIGNED NOT NULL,
                         label VARCHAR(60) NOT NULL DEFAULT '',
                         PRIMARY KEY (id),
                         KEY unit_idx (unit_id)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'leads' )} (
+                    CREATE TABLE {$p( $wpdb, 'leads' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         name VARCHAR(191) NOT NULL,
@@ -165,11 +157,9 @@ final class Migration_Runner {
                         PRIMARY KEY (id),
                         KEY tenant_idx (tenant_id),
                         KEY tenant_stage_idx (tenant_id, pipeline_stage)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'lead_history' )} (
+                    CREATE TABLE {$p( $wpdb, 'lead_history' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         lead_id BIGINT UNSIGNED NOT NULL,
                         actor_id BIGINT UNSIGNED NULL,
@@ -179,11 +169,9 @@ final class Migration_Runner {
                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (id),
                         KEY lead_idx (lead_id)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'media' )} (
+                    CREATE TABLE {$p( $wpdb, 'media' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         owner_type VARCHAR(16) NOT NULL,
@@ -199,11 +187,9 @@ final class Migration_Runner {
                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (id),
                         KEY tenant_owner_idx (tenant_id, owner_type, owner_id)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'analytics_events' )} (
+                    CREATE TABLE {$p( $wpdb, 'analytics_events' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         event_type VARCHAR(32) NOT NULL,
@@ -213,30 +199,24 @@ final class Migration_Runner {
                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (id),
                         KEY tenant_event_idx (tenant_id, event_type, created_at)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'tags' )} (
+                    CREATE TABLE {$p( $wpdb, 'tags' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         name VARCHAR(60) NOT NULL,
                         PRIMARY KEY (id),
                         KEY tenant_idx (tenant_id)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'inventory_tags' )} (
+                    CREATE TABLE {$p( $wpdb, 'inventory_tags' )} (
                         unit_id BIGINT UNSIGNED NOT NULL,
                         tag_id BIGINT UNSIGNED NOT NULL,
                         accepted TINYINT(1) NOT NULL DEFAULT 0,
                         PRIMARY KEY (unit_id, tag_id)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'price_history' )} (
+                    CREATE TABLE {$p( $wpdb, 'price_history' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         project_id BIGINT UNSIGNED NOT NULL,
@@ -244,11 +224,9 @@ final class Migration_Runner {
                         recorded_at DATETIME NOT NULL,
                         PRIMARY KEY (id),
                         KEY tenant_project_idx (tenant_id, project_id, recorded_at)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'nearby_places' )} (
+                    CREATE TABLE {$p( $wpdb, 'nearby_places' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         project_id BIGINT UNSIGNED NOT NULL,
                         category VARCHAR(16) NOT NULL,
@@ -256,11 +234,9 @@ final class Migration_Runner {
                         distance_km DECIMAL(5,2) NOT NULL,
                         PRIMARY KEY (id),
                         KEY project_cat_idx (project_id, category)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'bookmarks' )} (
+                    CREATE TABLE {$p( $wpdb, 'bookmarks' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         visitor_token VARCHAR(64) NOT NULL,
@@ -268,22 +244,18 @@ final class Migration_Runner {
                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (id),
                         KEY tenant_visitor_idx (tenant_id, visitor_token)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'saved_alerts' )} (
+                    CREATE TABLE {$p( $wpdb, 'saved_alerts' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         visitor_token VARCHAR(64) NOT NULL,
                         criteria_json LONGTEXT NOT NULL,
                         PRIMARY KEY (id),
                         KEY tenant_visitor_idx (tenant_id, visitor_token)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'push_subscriptions' )} (
+                    CREATE TABLE {$p( $wpdb, 'push_subscriptions' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         visitor_token VARCHAR(64) NOT NULL,
@@ -294,11 +266,9 @@ final class Migration_Runner {
                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (id),
                         KEY tenant_visitor_idx (tenant_id, visitor_token)
-                    ) {$cs};"
-                );
+                    ) {$cs};
 
-                dbDelta(
-                    "CREATE TABLE {$p( $wpdb, 'crm_config' )} (
+                    CREATE TABLE {$p( $wpdb, 'crm_config' )} (
                         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                         tenant_id BIGINT UNSIGNED NOT NULL,
                         platform VARCHAR(32) NOT NULL,
@@ -308,8 +278,9 @@ final class Migration_Runner {
                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (id),
                         KEY tenant_platform_idx (tenant_id, platform)
-                    ) {$cs};"
-                );
+                    ) {$cs};";
+
+                dbDelta( $sql );
             },
         ];
     }
