@@ -1,0 +1,11 @@
+# Build / vendor / cache
+rims-pro/vendor/
+rims-pro/.phpunit.cache/
+rims-pro/composer.lock
+node_modules/
+.DS_Store
+
+# Local env / IDE
+.idea/
+.vscode/
+*.log

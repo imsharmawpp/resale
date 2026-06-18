@@ -1,0 +1,40 @@
+{
+    "name": "goldlineestate/rims-pro",
+    "description": "RIMS Pro - Resale Inventory Management System for WordPress",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "giorgiosironi/eris": "^0.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "RimsPro\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RimsPro\\Tests\\": "tests/"
+        }
+    },
+    "suggest": {
+        "dompdf/dompdf": "Server-side branded PDF generation (recommended at runtime)",
+        "phpoffice/phpspreadsheet": "Multi-sheet XLSX exports (recommended at runtime)",
+        "intervention/image": "Image crop/compress/watermark (recommended at runtime)",
+        "minishlink/web-push": "VAPID web push delivery (recommended at runtime)"
+    },
+    "scripts": {
+        "test": "phpunit --testdox",
+        "package": "bash ../build.sh"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}

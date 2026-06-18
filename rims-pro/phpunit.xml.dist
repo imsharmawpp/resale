@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="tests/bootstrap.php"
+    colors="true"
+    beStrictAboutTestsThatDoNotTestAnything="false"
+    failOnRisky="false"
+    cacheDirectory=".phpunit.cache"
+    executionOrder="default">
+    <testsuites>
+        <testsuite name="rims-pro">
+            <directory>tests/Property</directory>
+            <directory>tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
